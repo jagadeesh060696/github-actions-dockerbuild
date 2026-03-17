@@ -15,14 +15,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Set image tag
+      # Set image tag to commit SHA
       - name: Set Image Tag
         run: echo "IMAGE_TAG=${{ github.sha }}" >> $GITHUB_ENV
-
-      # Build Docker image
-      - name: Build Docker Image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/demo-app:${{ env.IMAGE_TAG }} .
 
       # Login to Docker Hub
       - name: Docker Login
@@ -30,6 +25,11 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build Docker image from subfolder
+      - name: Build Docker Image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/demo-app:${{ env.IMAGE_TAG }} ./github-actions-docker
 
       # Push Docker image
       - name: Push Docker Image
